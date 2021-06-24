@@ -34,7 +34,12 @@
                 ></el-input>
               </el-col>
               <el-col :span="6">
-                <img class="capatcha" src="../../assets/captcha.jpg" alt="" />
+                <img
+                  @click="changeCaptcha"
+                  class="capatcha"
+                  :src="captchaURL"
+                  alt=""
+                />
               </el-col>
             </el-row>
           </el-form-item>
@@ -58,6 +63,7 @@
 </template>
 
 <script>
+import axios from "axios";
 export default {
   name: "login",
   data() {
@@ -114,6 +120,8 @@ export default {
           },
         ],
       },
+      // 验证码地址
+      captchaURL: process.env.VUE_APP_BASEURL + "/captcha?type=login",
     };
   },
   methods: {
@@ -124,7 +132,18 @@ export default {
         this.$refs.form.validate((valid) => {
           if (valid) {
             // 验证成功
-            this.$message.success("恭喜你，成功啦");
+            axios({
+              url: process.env.VUE_APP_BASEURL + "/login",
+              method: "post",
+              withCredentials: true,
+              data: {
+                phone: this.form.phone,
+                password: this.form.password,
+                code: this.form.captcha,
+              },
+            }).then((res) => {
+              console.log(res);
+            });
           } else {
             // 验证失败
             this.$message.error("很遗憾，输入错误");
@@ -133,6 +152,10 @@ export default {
           }
         });
       }
+    },
+    changeCaptcha() {
+      this.captchaURL =
+        process.env.VUE_APP_BASEURL + "/captcha?type=login&" + Date.now();
     },
   },
 };
