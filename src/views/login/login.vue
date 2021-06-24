@@ -53,12 +53,75 @@
           </el-form-item>
           <el-form-item>
             <el-button type="primary" @click="submitForm">登录</el-button>
-            <el-button class="register-button" type="success">取消</el-button>
+            <el-button
+              class="register-button"
+              @click="dialogFormVisible = !dialogFormVisible"
+              type="success"
+              >注册</el-button
+            >
           </el-form-item>
         </el-form>
       </div>
     </div>
     <img src="../../assets/login_banner_ele.png" alt="" class="login-pic" />
+    <el-dialog title="收货地址" :visible.sync="dialogFormVisible">
+      <el-form ref="form" :model="form">
+        <el-form-item label="昵称" :label-width="formLabelWidth">
+          <el-upload
+            class="avatar-uploader"
+            action="https://jsonplaceholder.typicode.com/posts/"
+            :show-file-list="false"
+            :on-success="handleAvatarSuccess"
+            :before-upload="beforeAvatarUpload"
+          >
+            <img v-if="imageUrl" :src="imageUrl" class="avatar" />
+            <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+          </el-upload>
+        </el-form-item>
+        <el-form-item label="昵称" :label-width="formLabelWidth">
+          <el-input v-model="form.name" autocomplete="off"></el-input>
+        </el-form-item>
+        <el-form-item label="邮箱" :label-width="formLabelWidth">
+          <el-input v-model="form.name" autocomplete="off"></el-input>
+        </el-form-item>
+        <el-form-item label="手机" :label-width="formLabelWidth">
+          <el-input v-model="form.name" autocomplete="off"></el-input>
+        </el-form-item>
+        <el-form-item label="密码" :label-width="formLabelWidth">
+          <el-input v-model="form.name" autocomplete="off"></el-input>
+        </el-form-item>
+        <el-form-item label="图形码" :label-width="formLabelWidth">
+          <el-row>
+            <el-col :span="16">
+              <el-input v-model="form.name" autocomplete="off"></el-input>
+            </el-col>
+            <el-col :offset="1" :span="7">
+              <img
+                class="register-captcha"
+                src="../../assets/captcha.jpg"
+                alt=""
+              />
+            </el-col>
+          </el-row>
+        </el-form-item>
+        <el-form-item label="验证码" :label-width="formLabelWidth">
+          <el-row>
+            <el-col :span="16"
+              ><el-input v-model="form.name" autocomplete="off"></el-input
+            ></el-col>
+            <el-col :span="7" :offset="1">
+              <el-button>获取用户验证码</el-button>
+            </el-col>
+          </el-row>
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="dialogFormVisible = false">取 消</el-button>
+        <el-button type="primary" @click="dialogFormVisible = false"
+          >确 定</el-button
+        >
+      </div>
+    </el-dialog>
   </div>
 </template>
 
@@ -122,6 +185,8 @@ export default {
       },
       // 验证码地址
       captchaURL: process.env.VUE_APP_BASEURL + "/captcha?type=login",
+      dialogFormVisible: false, // 注册框是否弹出
+      formLabelWidth: "60px",
     };
   },
   methods: {
@@ -234,6 +299,52 @@ export default {
         margin-top: 26px;
       }
     }
+  }
+
+  // 对话框
+  .el-dialog {
+    width: 603px;
+    .el-dialog__header {
+      text-align: center;
+      background: linear-gradient(to right, #01c4fa, #1294fa);
+      padding-bottom: 20px;
+      .el-dialog__title {
+        color: white;
+      }
+    }
+  }
+  // 注册验证码
+  .register-captcha {
+    height: 40px;
+    width: 100%;
+  }
+  // 头像的样式
+  // 头像居中
+  .avatar-uploader {
+    text-align: center;
+  }
+  .avatar-uploader .el-upload {
+    border: 1px dashed #d9d9d9;
+    border-radius: 6px;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+  }
+  .avatar-uploader .el-upload:hover {
+    border-color: #409eff;
+  }
+  .avatar-uploader-icon {
+    font-size: 28px;
+    color: #8c939d;
+    width: 178px;
+    height: 178px;
+    line-height: 178px;
+    text-align: center;
+  }
+  .avatar {
+    width: 178px;
+    height: 178px;
+    display: block;
   }
 }
 </style>
