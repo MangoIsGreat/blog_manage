@@ -133,7 +133,7 @@
 </template>
 
 <script>
-import axios from "axios";
+import { login, sendsms, register } from "../../api/login";
 export default {
   name: "login",
   data() {
@@ -259,7 +259,7 @@ export default {
       // 验证码地址
       captchaURL: process.env.VUE_APP_BASEURL + "/captcha?type=login",
       dialogFormVisible: false, // 注册框是否弹出
-      formLabelWidth: "60px",
+      formLabelWidth: "65px",
       regCaptchaUrl: process.env.VUE_APP_BASEURL + "/captcha?type=sendsms",
       time: 0, // 倒计时时间
       uploadUrl: process.env.VUE_APP_BASEURL + "/uploads",
@@ -274,15 +274,20 @@ export default {
         this.$refs.form.validate((valid) => {
           if (valid) {
             // 验证成功
-            axios({
-              url: process.env.VUE_APP_BASEURL + "/login",
-              method: "post",
-              withCredentials: true,
-              data: {
-                phone: this.form.phone,
-                password: this.form.password,
-                code: this.form.captcha,
-              },
+            // axios({
+            //   url: process.env.VUE_APP_BASEURL + "/login",
+            //   method: "post",
+            //   withCredentials: true,
+            //   data: {
+            //     phone: this.form.phone,
+            //     password: this.form.password,
+            //     code: this.form.captcha,
+            //   },
+            // })
+            login({
+              phone: this.form.phone,
+              password: this.form.password,
+              code: this.form.captcha,
             }).then((res) => {
               console.log(res);
             });
@@ -331,14 +336,18 @@ export default {
           }
         }, 1000);
 
-        axios({
-          url: process.env.VUE_APP_BASEURL + "/sendsms",
-          method: "post",
-          withCredentials: true,
-          data: {
-            phone: this.regForm.phone,
-            code: this.regForm.code,
-          },
+        // axios({
+        //   url: process.env.VUE_APP_BASEURL + "/sendsms",
+        //   method: "post",
+        //   withCredentials: true,
+        //   data: {
+        //     phone: this.regForm.phone,
+        //     code: this.regForm.code,
+        //   },
+        // })
+        sendsms({
+          phone: this.regForm.phone,
+          code: this.regForm.code,
         }).then((res) => {
           if (res.data.code === 200) {
             this.$message.success("短信验证码是：" + res.data.data.captcha);
@@ -351,17 +360,25 @@ export default {
       this.$refs.regForm.validate((valid) => {
         if (valid) {
           // 验证成功
-          axios({
-            url: process.env.VUE_APP_BASEURL + "/register",
-            method: "post",
-            data: {
-              username: this.regForm.username,
-              phone: this.regForm.phone,
-              email: this.regForm.email,
-              avatar: this.regForm.avatar,
-              password: this.regForm.password,
-              rcode: this.regForm.rcode,
-            },
+          // axios({
+          //   url: process.env.VUE_APP_BASEURL + "/register",
+          //   method: "post",
+          //   data: {
+          //     username: this.regForm.username,
+          //     phone: this.regForm.phone,
+          //     email: this.regForm.email,
+          //     avatar: this.regForm.avatar,
+          //     password: this.regForm.password,
+          //     rcode: this.regForm.rcode,
+          //   },
+          // })
+          register({
+            username: this.regForm.username,
+            phone: this.regForm.phone,
+            email: this.regForm.email,
+            avatar: this.regForm.avatar,
+            password: this.regForm.password,
+            rcode: this.regForm.rcode,
           }).then((res) => {
             if (res.data.code === 200) {
               this.$message.success("注册成功！");
