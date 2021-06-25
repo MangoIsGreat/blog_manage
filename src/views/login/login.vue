@@ -65,12 +65,13 @@
     </div>
     <img src="../../assets/login_banner_ele.png" alt="" class="login-pic" />
     <el-dialog title="收货地址" :visible.sync="dialogFormVisible">
-      <el-form ref="form" :model="form">
-        <el-form-item label="昵称" :label-width="formLabelWidth">
+      <el-form ref="regForm" :model="regForm" :rules="regRules">
+        <el-form-item label="头像" prop="avatar" :label-width="formLabelWidth">
           <el-upload
             class="avatar-uploader"
-            action="https://jsonplaceholder.typicode.com/posts/"
+            :action="uploadUrl"
             :show-file-list="false"
+            name="image"
             :on-success="handleAvatarSuccess"
             :before-upload="beforeAvatarUpload"
           >
@@ -78,39 +79,45 @@
             <i v-else class="el-icon-plus avatar-uploader-icon"></i>
           </el-upload>
         </el-form-item>
-        <el-form-item label="昵称" :label-width="formLabelWidth">
-          <el-input v-model="form.name" autocomplete="off"></el-input>
+        <el-form-item
+          label="昵称"
+          prop="username"
+          :label-width="formLabelWidth"
+        >
+          <el-input v-model="regForm.username" autocomplete="off"></el-input>
         </el-form-item>
-        <el-form-item label="邮箱" :label-width="formLabelWidth">
-          <el-input v-model="form.name" autocomplete="off"></el-input>
+        <el-form-item label="邮箱" prop="email" :label-width="formLabelWidth">
+          <el-input v-model="regForm.email" autocomplete="off"></el-input>
         </el-form-item>
-        <el-form-item label="手机" :label-width="formLabelWidth">
-          <el-input v-model="form.name" autocomplete="off"></el-input>
+        <el-form-item label="手机" prop="phone" :label-width="formLabelWidth">
+          <el-input v-model="regForm.phone" autocomplete="off"></el-input>
         </el-form-item>
-        <el-form-item label="密码" :label-width="formLabelWidth">
-          <el-input v-model="form.name" autocomplete="off"></el-input>
+        <el-form-item
+          label="密码"
+          prop="password"
+          :label-width="formLabelWidth"
+        >
+          <el-input v-model="regForm.password" autocomplete="off"></el-input>
         </el-form-item>
         <el-form-item label="图形码" :label-width="formLabelWidth">
           <el-row>
             <el-col :span="16">
-              <el-input v-model="form.name" autocomplete="off"></el-input>
+              <el-input v-model="regForm.name" autocomplete="off"></el-input>
             </el-col>
             <el-col :offset="1" :span="7">
-              <img
-                class="register-captcha"
-                src="../../assets/captcha.jpg"
-                alt=""
-              />
+              <img class="register-captcha" :src="regCaptchaUrl" alt="" />
             </el-col>
           </el-row>
         </el-form-item>
-        <el-form-item label="验证码" :label-width="formLabelWidth">
+        <el-form-item label="验证码" prop="rcode" :label-width="formLabelWidth">
           <el-row>
             <el-col :span="16"
-              ><el-input v-model="form.name" autocomplete="off"></el-input
+              ><el-input v-model="regForm.rcode" autocomplete="off"></el-input
             ></el-col>
             <el-col :span="7" :offset="1">
-              <el-button>获取用户验证码</el-button>
+              <el-button :disabled="time != 0" @click="getMessageCode">{{
+                time == 0 ? "获取用户验证码" : `还有${time}S继续获取`
+              }}</el-button>
             </el-col>
           </el-row>
         </el-form-item>
@@ -145,6 +152,20 @@ export default {
       }
     };
 
+    var checkEmail = (rule, value, callback) => {
+      if (!value) {
+        return callback(new Error("邮箱不能为空"));
+      } else {
+        // 判断手机号格式
+        const reg = /\w[-\w.+]*@([A-Za-z0-9][-A-Za-z0-9]+\.)+[A-Za-z]{2,14}/;
+        if (reg.test(value) == true) {
+          callback();
+        } else {
+          callback(new Error("老铁，你的邮箱写错了噢"));
+        }
+      }
+    };
+
     return {
       // 表单数据：
       form: {
@@ -152,6 +173,15 @@ export default {
         password: "",
         captcha: "",
         checked: false,
+        code: "",
+      },
+      regForm: {
+        phone: "",
+        code: "",
+        avatar: "",
+        email: "",
+        password: "",
+        rcode: "",
       },
       // 定义校验规则：
       rules: {
@@ -183,10 +213,57 @@ export default {
           },
         ],
       },
+      regRules: {
+        phone: [{ required: true, validator: checkPhone, trigger: "blur" }],
+        password: [
+          {
+            required: true,
+            message: "密码不能为空",
+            trigger: "change",
+          },
+          {
+            min: 6,
+            max: 18,
+            message: "密码长度为6到18",
+            trigger: "change",
+          },
+        ],
+        username: [
+          {
+            required: true,
+            message: "用户名不能为空",
+            trigger: "blur",
+          },
+          {
+            min: 2,
+            max: 18,
+            message: "用户名长度为2到18",
+            trigger: "change",
+          },
+        ],
+        rcode: [
+          {
+            required: true,
+            message: "验证码不能为空",
+            trigger: "blur",
+          },
+          {
+            min: 4,
+            max: 4,
+            message: "验证码长度为4",
+            trigger: "change",
+          },
+        ],
+        email: [{ required: true, validator: checkEmail, trigger: "blur" }],
+      },
       // 验证码地址
       captchaURL: process.env.VUE_APP_BASEURL + "/captcha?type=login",
       dialogFormVisible: false, // 注册框是否弹出
       formLabelWidth: "60px",
+      regCaptchaUrl: process.env.VUE_APP_BASEURL + "/captcha?type=sendsms",
+      time: 0, // 倒计时时间
+      uploadUrl: process.env.VUE_APP_BASEURL + "/uploads",
+      imageUrl: "",
     };
   },
   methods: {
@@ -221,6 +298,82 @@ export default {
     changeCaptcha() {
       this.captchaURL =
         process.env.VUE_APP_BASEURL + "/captcha?type=login&" + Date.now();
+    },
+    changeRegCaptcha() {
+      this.regCaptchaUrl = `${
+        process.env.VUE_APP_BASEURL
+      }/captcha?type=sendsms&${Date.now()}`;
+    },
+    handleAvatarSuccess(res, file) {
+      // 保存头像地址
+      this.regForm.avatar = res.data.file_path;
+      // 生成本地的临时地址
+      this.imageUrl = URL.createObjectURL(file.raw);
+    },
+    beforeAvatarUpload() {},
+    getMessageCode() {
+      if (this.time == 0) {
+        // 手机号判断
+        const reg = /^(13[0-9]|14[5|7]|15[0|1|2|3|4|5|6|7|8|9]|18[0|1|2|3|5|6|7|8|9])\d{8}$/;
+        if (!reg.test(this.regForm.phone)) {
+          return this.$message.error("手机号格式错误！");
+        }
+        if (this.regForm.code == "" || this.regForm.code.length != 4) {
+          return this.$message, error("验证码格式错误！");
+        }
+
+        // 开启倒计时：
+        this.time = 60;
+        const interId = setInterval(() => {
+          this.time--;
+          if (this.time == 0) {
+            clearInterval(interId);
+          }
+        }, 1000);
+
+        axios({
+          url: process.env.VUE_APP_BASEURL + "/sendsms",
+          method: "post",
+          withCredentials: true,
+          data: {
+            phone: this.regForm.phone,
+            code: this.regForm.code,
+          },
+        }).then((res) => {
+          if (res.data.code === 200) {
+            this.$message.success("短信验证码是：" + res.data.data.captcha);
+          }
+        });
+      } else {
+      }
+    },
+    submitRegForm() {
+      this.$refs.regForm.validate((valid) => {
+        if (valid) {
+          // 验证成功
+          axios({
+            url: process.env.VUE_APP_BASEURL + "/register",
+            method: "post",
+            data: {
+              username: this.regForm.username,
+              phone: this.regForm.phone,
+              email: this.regForm.email,
+              avatar: this.regForm.avatar,
+              password: this.regForm.password,
+              rcode: this.regForm.rcode,
+            },
+          }).then((res) => {
+            if (res.data.code === 200) {
+              this.$message.success("注册成功！");
+              this.dialogFormVisible = false;
+            }
+          });
+        } else {
+          this.$message.error("验证失败");
+
+          return false;
+        }
+      });
     },
   },
 };
