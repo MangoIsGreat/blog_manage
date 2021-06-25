@@ -2,6 +2,11 @@ import Vue from "vue";
 import VueRouter from "vue-router";
 import login from "../views/login/login.vue";
 import index from "../views/index/index.vue";
+import chart from "../views/index/chart/index.vue";
+import enterprise from "../views/index/enterprise/index.vue";
+import question from "../views/index/question/index.vue";
+import subject from "../views/index/subject/index.vue";
+import user from "../views/index/user/index.vue";
 
 // 安装vue-router
 Vue.use(VueRouter);
@@ -15,6 +20,28 @@ const routes = [
   {
     path: "/index",
     component: index,
+    children: [
+      {
+        path: "subject",
+        component: subject,
+      },
+      {
+        path: "chart",
+        component: chart,
+      },
+      {
+        path: "enterprise",
+        component: enterprise,
+      },
+      {
+        path: "question",
+        component: question,
+      },
+      {
+        path: "user",
+        component: user,
+      },
+    ],
   },
 ];
 

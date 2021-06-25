@@ -2,7 +2,7 @@
   <el-container class="index-container">
     <el-header class="my-header">
       <div class="left">
-        <i class="el-icon-s-fold icon"></i>
+        <i class="el-icon-s-fold icon" @click="isCollapse = !isCollapse"></i>
         <img src="../../assets/index_logo.png" alt="" class="logo" />
         <span class="title">黑马面面</span>
       </div>
@@ -13,36 +13,38 @@
       </div>
     </el-header>
     <el-container>
-      <el-aside width="200px" class="my-aside">
+      <el-aside width="auto" class="my-aside">
         <el-menu
-          default-active="2"
+          router
+          default-active="/index/user"
           class="el-menu-vertical-demo"
-          @open="handleOpen"
-          @close="handleClose"
+          :collapse="isCollapse"
         >
-          <el-menu-item index="1">
+          <el-menu-item index="/index/chart">
             <i class="el-icon-pie-chart"></i>
             <span slot="title">数据概览</span>
           </el-menu-item>
-          <el-menu-item index="2">
+          <el-menu-item index="/index/user">
             <i class="el-icon-user"></i>
             <span slot="title">用户列表</span>
           </el-menu-item>
-          <el-menu-item index="3">
+          <el-menu-item index="/index/question">
             <i class="el-icon-edit-outline"></i>
             <span slot="title">题库列表</span>
           </el-menu-item>
-          <el-menu-item index="4">
+          <el-menu-item index="/index/enterprise">
             <i class="el-icon-office-building"></i>
             <span slot="title">企业列表</span>
           </el-menu-item>
-          <el-menu-item index="5">
+          <el-menu-item index="/index/subject">
             <i class="el-icon-notebook-2"></i>
             <span slot="title">学科列表</span>
           </el-menu-item>
         </el-menu>
       </el-aside>
-      <el-main class="my-main">Main</el-main>
+      <el-main class="my-main">
+        <router-view></router-view>
+      </el-main>
     </el-container>
   </el-container>
 </template>
@@ -50,6 +52,11 @@
 <script>
 export default {
   name: "index",
+  data() {
+    return {
+      isCollapse: false,
+    };
+  },
 };
 </script>
 
@@ -95,6 +102,10 @@ export default {
   }
   .my-aside {
     // background-color: green;
+    .el-menu-vertical-demo:not(.el-menu--collapse) {
+      width: 200px;
+      min-height: 400px;
+    }
   }
   .my-main {
     background-color: purple;
