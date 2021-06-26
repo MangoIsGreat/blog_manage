@@ -7,8 +7,8 @@
         <span class="title">黑马面面</span>
       </div>
       <div class="right">
-        <img src="../../assets/classflower.jpg" alt="" class="user-icon" />
-        <span class="user-name">李达，您好</span>
+        <img :src="userInfo.avatar" alt="" class="user-icon" />
+        <span class="user-name">{{userInfo.username}}，您好</span>
         <el-button type="primary" size="small">退出</el-button>
       </div>
     </el-header>
@@ -50,19 +50,33 @@
 </template>
 
 <script>
-import { getToken } from "../../utils/token";
+import { getToken, removeToken } from "../../utils/token";
+import { userInfo } from "../../api/user";
 export default {
   name: "index",
   data() {
     return {
       isCollapse: false,
+      userInfo: {},
     };
   },
   beforeCreate() {
     if (!getToken()) {
       this.$message.error("你还没有登陆！");
-      this.$router.push("/login");
+    //   this.$router.push("/login");
     }
+  },
+  created() {
+    userInfo().then((res) => {
+      if (res.data.code === 200) {
+        res.data.data.avatar = `${process.env.VUE_APP_BASEURL}/${res.data.data.avatar}`;
+        this.userInfo = res.data.data;
+      } else if (res.data.code === 206) {
+        this.$message.warning("token信息验证失败！");
+        removeToken();
+        // this.$router.push("/login");
+      }
+    });
   },
 };
 </script>
