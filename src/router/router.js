@@ -8,6 +8,8 @@ import question from "../views/index/question/index.vue";
 import subject from "../views/index/subject/index.vue";
 import user from "../views/index/user/index.vue";
 
+import { getToken } from "../utils/token";
+
 // 安装vue-router
 Vue.use(VueRouter);
 
@@ -48,6 +50,17 @@ const routes = [
 // 创建路由实例
 const router = new VueRouter({
   routes,
+});
+
+router.beforeEach((to, from, next) => {
+  if (to.path != "/login") {
+    if (!getToken()) {
+      window.alert("请先登录！");
+      next("/login");
+    }
+  } else {
+    next();
+  }
 });
 
 export default router;

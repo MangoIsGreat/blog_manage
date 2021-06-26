@@ -8,7 +8,7 @@
       </div>
       <div class="right">
         <img :src="userInfo.avatar" alt="" class="user-icon" />
-        <span class="user-name">{{userInfo.username}}，您好</span>
+        <span class="user-name">{{ userInfo.username }}，您好</span>
         <el-button type="primary" size="small">退出</el-button>
       </div>
     </el-header>
@@ -50,7 +50,7 @@
 </template>
 
 <script>
-import { getToken, removeToken } from "../../utils/token";
+import { removeToken } from "../../utils/token";
 import { userInfo } from "../../api/user";
 export default {
   name: "index",
@@ -60,12 +60,12 @@ export default {
       userInfo: {},
     };
   },
-  beforeCreate() {
-    if (!getToken()) {
-      this.$message.error("你还没有登陆！");
-    //   this.$router.push("/login");
-    }
-  },
+  //   beforeCreate() {
+  //     if (!getToken()) {
+  //       this.$message.error("你还没有登陆！");
+  //     //   this.$router.push("/login");
+  //     }
+  //   },
   created() {
     userInfo().then((res) => {
       if (res.data.code === 200) {
