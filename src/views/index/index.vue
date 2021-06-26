@@ -16,7 +16,7 @@
       <el-aside width="auto" class="my-aside">
         <el-menu
           router
-          default-active="/index/user"
+          :default-active="$route.path"
           class="el-menu-vertical-demo"
           :collapse="isCollapse"
         >
@@ -50,12 +50,19 @@
 </template>
 
 <script>
+import { getToken } from "../../utils/token";
 export default {
   name: "index",
   data() {
     return {
       isCollapse: false,
     };
+  },
+  beforeCreate() {
+    if (!getToken()) {
+      this.$message.error("你还没有登陆！");
+      this.$router.push("/login");
+    }
   },
 };
 </script>

@@ -134,6 +134,7 @@
 
 <script>
 import { login, sendsms, register } from "../../api/login";
+import { setToken } from "../../utils/token";
 export default {
   name: "login",
   data() {
@@ -289,7 +290,14 @@ export default {
               password: this.form.password,
               code: this.form.captcha,
             }).then((res) => {
-              console.log(res);
+              if (res.data.code === 202) {
+                this.$message.error(res.data.message);
+              } else if (res.data.code === 200) {
+                this.$message.success("你可算回来啦！");
+                // localStorage.setItem("token", res.data.data.token);
+                setToken(res.data.data.token);
+                this.$router.push("/index");
+              }
             });
           } else {
             // 验证失败
