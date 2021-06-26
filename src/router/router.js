@@ -8,7 +8,10 @@ import question from "../views/index/question/index.vue";
 import subject from "../views/index/subject/index.vue";
 import user from "../views/index/user/index.vue";
 
-import { getToken } from "../utils/token";
+import { getToken, removeToken } from "../utils/token";
+import { Message } from "element-ui";
+import { userInfo } from "../api/user";
+import store from "../store/store";
 
 // 安装vue-router
 Vue.use(VueRouter);
@@ -52,11 +55,29 @@ const router = new VueRouter({
   routes,
 });
 
+// 创建路由白名单数组
+const whitePaths = ["/login"];
+
 router.beforeEach((to, from, next) => {
-  if (to.path != "/login") {
+  if (whitePaths.includes(to.path.toLocaleLowerCase()) === false) {
+    // 必须要登录才能访问
     if (!getToken()) {
-      window.alert("请先登录！");
+      Message.error("你还未登录，请先登录！");
       next("/login");
+    } else {
+      userInfo().then((res) => {
+        if (res.data.code === 200) {
+          // next();
+          store.state.userInfo = res.data.data;
+          store.state.userInfo.avatar =
+            process.env.VUE_APP_BASEURL + "/" + store.state.userInfo.avatar;
+          next();
+        } else if (res.data.code === 206) {
+          Message.warning("token认证失败！");
+          removeToken();
+          next("/login");
+        }
+      });
     }
   } else {
     next();

@@ -7,8 +7,10 @@
         <span class="title">黑马面面</span>
       </div>
       <div class="right">
-        <img :src="userInfo.avatar" alt="" class="user-icon" />
-        <span class="user-name">{{ userInfo.username }}，您好</span>
+        <img :src="$store.state.userInfo.avatar" alt="" class="user-icon" />
+        <span class="user-name"
+          >{{ $store.state.userInfo.username }}，您好</span
+        >
         <el-button type="primary" size="small">退出</el-button>
       </div>
     </el-header>
@@ -50,14 +52,14 @@
 </template>
 
 <script>
-import { removeToken } from "../../utils/token";
-import { userInfo } from "../../api/user";
+// import { removeToken } from "../../utils/token";
+// import { userInfo } from "../../api/user";
 export default {
   name: "index",
   data() {
     return {
       isCollapse: false,
-      userInfo: {},
+      // userInfo: {},
     };
   },
   //   beforeCreate() {
@@ -66,18 +68,18 @@ export default {
   //     //   this.$router.push("/login");
   //     }
   //   },
-  created() {
-    userInfo().then((res) => {
-      if (res.data.code === 200) {
-        res.data.data.avatar = `${process.env.VUE_APP_BASEURL}/${res.data.data.avatar}`;
-        this.userInfo = res.data.data;
-      } else if (res.data.code === 206) {
-        this.$message.warning("token信息验证失败！");
-        removeToken();
-        // this.$router.push("/login");
-      }
-    });
-  },
+  // created() {
+  //   userInfo().then((res) => {
+  //     if (res.data.code === 200) {
+  //       res.data.data.avatar = `${process.env.VUE_APP_BASEURL}/${res.data.data.avatar}`;
+  //       this.userInfo = res.data.data;
+  //     } else if (res.data.code === 206) {
+  //       this.$message.warning("token信息验证失败！");
+  //       removeToken();
+  //       // this.$router.push("/login");
+  //     }
+  //   });
+  // },
 };
 </script>
 
