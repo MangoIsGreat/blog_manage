@@ -63,7 +63,8 @@ router.beforeEach((to, from, next) => {
     // 必须要登录才能访问
     if (!getToken()) {
       Message.error("你还未登录，请先登录！");
-      next("/login");
+      // next("/login");
+      next();
     } else {
       userInfo().then((res) => {
         if (res.data.code === 200) {
@@ -75,7 +76,8 @@ router.beforeEach((to, from, next) => {
         } else if (res.data.code === 206) {
           Message.warning("token认证失败！");
           removeToken();
-          next("/login");
+          // next("/login");
+          next();
         }
       });
     }
