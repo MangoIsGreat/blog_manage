@@ -28,7 +28,12 @@
         <el-form-item class="btn-form-item">
           <el-button type="primary">搜索</el-button>
           <el-button>清除</el-button>
-          <el-button type="primary" icon="el-icon-plus">添加学科</el-button>
+          <el-button
+            @click="addFormVisible = true"
+            type="primary"
+            icon="el-icon-plus"
+            >添加学科</el-button
+          >
         </el-form-item>
       </el-form>
     </el-card>
@@ -52,36 +57,13 @@
       >
       </el-pagination>
     </el-card>
-    <!-- 新增对话框 -->
-    <el-dialog center title="新增学科" :visible.sync="addFormVisible">
-      <el-form :model="addForm">
-        <el-form-item label="学科编号" :label-width="formLabelWidth">
-          <el-input v-model="addForm.name" autocomplete="off"></el-input>
-        </el-form-item>
-        <el-form-item label="学科名称" :label-width="formLabelWidth">
-          <el-input v-model="addForm.name" autocomplete="off"></el-input>
-        </el-form-item>
-        <el-form-item label="学科简称" :label-width="formLabelWidth">
-          <el-input v-model="addForm.name" autocomplete="off"></el-input>
-        </el-form-item>
-        <el-form-item label="学科简介" :label-width="formLabelWidth">
-          <el-input v-model="addForm.name" autocomplete="off"></el-input>
-        </el-form-item>
-        <el-form-item label="学科备注" :label-width="formLabelWidth">
-          <el-input v-model="addForm.name" autocomplete="off"></el-input>
-        </el-form-item>
-      </el-form>
-      <div slot="footer" class="dialog-footer">
-        <el-button @click="dialogFormVisible = false">取 消</el-button>
-        <el-button type="primary" @click="dialogFormVisible = false"
-          >确 定</el-button
-        >
-      </div>
-    </el-dialog>
+    <!-- 添加学科对话框 -->
+    <addDialog />
   </div>
 </template>
 
 <script>
+import addDialog from "./components/addDialog.vue";
 export default {
   data() {
     return {
@@ -108,10 +90,11 @@ export default {
           address: "上海市普陀区金沙江路 1516 弄",
         },
       ],
-      addFormVisible: true,
-      addForm: {},
-      formLabelWidth: "80px",
+      addFormVisible: false,
     };
+  },
+  components: {
+    addDialog,
   },
 };
 </script>
@@ -135,18 +118,6 @@ export default {
   }
   .body-card {
     margin-top: 19px;
-  }
-  .el-dialog {
-    width: 602px;
-  }
-  .el-dialog__header {
-    background: linear-gradient(to right, #01c4fa, #1394fa);
-    span {
-      color: white;
-    }
-    i {
-      color: white;
-    }
   }
 }
 </style>
