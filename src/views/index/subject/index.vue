@@ -98,9 +98,18 @@ export default {
     addDialog,
   },
   created() {
-    subjectList().then((res) => {
-      window.console.log(res);
-    });
+    // 获取列表数据
+    this.getSubList();
+  },
+  methods: {
+    getSubList() {
+      subjectList({
+        page: this.page,
+        limit: this.limit,
+      }).then((res) => {
+        this.tableData = res.data.items;
+      });
+    },
   },
 };
 </script>
