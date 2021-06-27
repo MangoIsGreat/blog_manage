@@ -64,6 +64,7 @@
 
 <script>
 import addDialog from "./components/addDialog.vue";
+import { subjectList } from "../../../api/subject";
 export default {
   data() {
     return {
@@ -95,6 +96,11 @@ export default {
   },
   components: {
     addDialog,
+  },
+  created() {
+    subjectList().then((res) => {
+      window.console.log(res);
+    });
   },
 };
 </script>
