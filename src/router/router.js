@@ -67,10 +67,10 @@ router.beforeEach((to, from, next) => {
     } else {
       userInfo().then((res) => {
         if (res.data.code === 200) {
-          // next();
-          store.state.userInfo = res.data.data;
-          store.state.userInfo.avatar =
-            process.env.VUE_APP_BASEURL + "/" + store.state.userInfo.avatar;
+          res.data.data.avatar =
+            process.env.VUE_APP_BASEURL + "/" + res.data.data.avatar;
+          // 将用户数据保存到仓库
+          store.commit("changeUserInfo", res.data.data);
           next();
         } else if (res.data.code === 206) {
           Message.warning("token认证失败！");

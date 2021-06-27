@@ -16,3 +16,14 @@ export function userInfo() {
     },
   });
 }
+
+// 用户退出
+export function userLogout() {
+  return instance({
+    url: "/user/logout",
+    method: "post",
+    headers: {
+      token: getToken(),
+    },
+  });
+}

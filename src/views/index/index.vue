@@ -7,11 +7,11 @@
         <span class="title">黑马面面</span>
       </div>
       <div class="right">
-        <img :src="$store.state.userInfo.avatar" alt="" class="user-icon" />
+        <img :src="userInfo.avatar" alt="" class="user-icon" />
         <span class="user-name"
-          >{{ $store.state.userInfo.username }}，您好</span
+          >{{ userInfo.username }}，您好</span
         >
-        <el-button type="primary" size="small">退出</el-button>
+        <el-button @click="logout" type="primary" size="small">退出</el-button>
       </div>
     </el-header>
     <el-container>
@@ -52,34 +52,37 @@
 </template>
 
 <script>
-// import { removeToken } from "../../utils/token";
-// import { userInfo } from "../../api/user";
+import { userLogout } from "../../api/user";
+import { removeToken } from "../../utils/token";
 export default {
   name: "index",
   data() {
     return {
       isCollapse: false,
-      // userInfo: {},
     };
   },
-  //   beforeCreate() {
-  //     if (!getToken()) {
-  //       this.$message.error("你还没有登陆！");
-  //     //   this.$router.push("/login");
-  //     }
-  //   },
-  // created() {
-  //   userInfo().then((res) => {
-  //     if (res.data.code === 200) {
-  //       res.data.data.avatar = `${process.env.VUE_APP_BASEURL}/${res.data.data.avatar}`;
-  //       this.userInfo = res.data.data;
-  //     } else if (res.data.code === 206) {
-  //       this.$message.warning("token信息验证失败！");
-  //       removeToken();
-  //       // this.$router.push("/login");
-  //     }
-  //   });
-  // },
+  computed: {
+    userInfo() {
+      return this.$store.state.userInfo;
+    },
+  },
+  methods: {
+    logout() {
+      this.$confirm("你真的要离开我这个网站吗？", "友情提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning",
+      }).then(() => {
+        userLogout().then((res) => {
+          if (res.data.code === 200) {
+            removeToken();
+            this.$store.state.userInfo = {};
+            this.$router.push("/login");
+          }
+        });
+      });
+    },
+  },
 };
 </script>
 
@@ -88,7 +91,6 @@ export default {
   height: 100%;
 
   .my-header {
-    // background-color: skyblue;
     display: flex;
     justify-content: space-between;
     .left {
@@ -124,7 +126,6 @@ export default {
     }
   }
   .my-aside {
-    // background-color: green;
     .el-menu-vertical-demo:not(.el-menu--collapse) {
       width: 200px;
       min-height: 400px;
