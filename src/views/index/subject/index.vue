@@ -22,7 +22,7 @@
         </el-form-item>
         <el-form-item class="btn-form-item">
           <el-button type="primary" @click="getSubList">搜索</el-button>
-          <el-button>清除</el-button>
+          <el-button @click="clear">清除</el-button>
           <el-button
             @click="addFormVisible = true"
             type="primary"
@@ -60,11 +60,11 @@
         background
         @size-change="handleSizeChange"
         @current-change="handleCurrentChange"
-        :current-page="currentPage4"
-        :page-sizes="[100, 200, 300, 400]"
-        :page-size="100"
+        :current-page="page"
+        :page-sizes="pageSizes"
+        :page-size="limit"
         layout="total, sizes, prev, pager, next, jumper"
-        :total="400"
+        :total="total"
       >
       </el-pagination>
     </el-card>
@@ -108,6 +108,10 @@ export default {
         },
       ],
       addFormVisible: false,
+      page: 1, // 页码
+      limit: 2, // 每页数据条数
+      pageSizes: [2, 4, 6, 9], // 页容量选项
+      total: 0, // 总条数
     };
   },
   components: {
@@ -118,13 +122,39 @@ export default {
     this.getSubList();
   },
   methods: {
+    // 页码改变
+    handleSizeChange(page) {
+      this.page = page;
+
+      this.getSubList();
+    },
+    // 页容量改变
+    handleCurrentChange(size) {
+      // 保存页容量
+      this.limit = size;
+
+      this.getSubList();
+    },
+    clear() {
+      for (const key in formInline) {
+        if (Object.hasOwnProperty.call(formInline, key)) {
+          this.formInline[key] = "";
+        }
+      }
+
+      this.getSubList();
+    },
     getSubList() {
       subjectList({
         page: this.page,
         limit: this.limit,
         ...formInline,
       }).then((res) => {
+        // 保存表格数据
         this.tableData = res.data.items;
+
+        // 保存总条数
+        this.total = res.data.pagination.total;
       });
     },
   },
