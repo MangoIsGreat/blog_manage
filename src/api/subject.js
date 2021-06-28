@@ -35,3 +35,12 @@ export function subjectRemove(data) {
     data,
   });
 }
+
+// 切换状态
+export function subjectStatus(data) {
+  return instance({
+    url: "/subject/status",
+    method: "post",
+    data,
+  });
+}

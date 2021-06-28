@@ -49,10 +49,10 @@
         <el-table-column label="操作">
           <template slot-scope="scope">
             <el-button type="text">编辑</el-button>
-            <el-button type="text">{{
+            <el-button @click="changeStatus(scope.row)" type="text">{{
               scope.row.status === 1 ? "禁用" : "启用"
             }}</el-button>
-            <el-button type="text">删除</el-button>
+            <el-button @click="removeItem" type="text">删除</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -70,12 +70,19 @@
     </el-card>
     <!-- 添加学科对话框 -->
     <addDialog />
+    <!-- 编辑学科对话框 -->
+    <editDialog ref="editDialog" />
   </div>
 </template>
 
 <script>
 import addDialog from "./components/addDialog.vue";
-import { subjectList } from "../../../api/subject";
+import editDialog from "./components/editDialog.vue";
+import {
+  subjectList,
+  subjectRemove,
+  subjectStatus,
+} from "../../../api/subject";
 export default {
   data() {
     return {
@@ -108,6 +115,7 @@ export default {
         },
       ],
       addFormVisible: false,
+      editFormVisible: false,
       page: 1, // 页码
       limit: 2, // 每页数据条数
       pageSizes: [2, 4, 6, 9], // 页容量选项
@@ -116,12 +124,47 @@ export default {
   },
   components: {
     addDialog,
+    editDialog,
   },
   created() {
     // 获取列表数据
     this.getSubList();
   },
   methods: {
+    showEdit(item) {
+      // 显示对话框
+      this.editFormVisible = true;
+
+      this.$refs.editDialog.editForm = JSON.parse(JSON.stringify(item));
+    },
+    changeStatus(item) {
+      subjectStatus({
+        id: item.id,
+      }).then((res) => {
+        if (res.code === 200) {
+          this.$message.success("状态修改成功！");
+
+          this.getSubList();
+        }
+      });
+    },
+    removeItem(item) {
+      this.$confirm(`你真的要删除 ${item.intro}`, "友情提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning",
+      })
+        .then(() => {
+          subjectRemove({
+            id: item.id,
+          }).then((res) => {
+            if (res.code === 200) {
+              this.$message.success("删除成功！");
+            }
+          });
+        })
+        .catch(() => {});
+    },
     // 页码改变
     handleSizeChange(page) {
       this.page = page;
@@ -136,8 +179,8 @@ export default {
       this.getSubList();
     },
     clear() {
-      for (const key in formInline) {
-        if (Object.hasOwnProperty.call(formInline, key)) {
+      for (const key in this.formInline) {
+        if (Object.hasOwnProperty.call(this.formInline, key)) {
           this.formInline[key] = "";
         }
       }
@@ -148,7 +191,7 @@ export default {
       subjectList({
         page: this.page,
         limit: this.limit,
-        ...formInline,
+        ...this.formInline,
       }).then((res) => {
         // 保存表格数据
         this.tableData = res.data.items;
