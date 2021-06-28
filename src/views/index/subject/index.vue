@@ -3,30 +3,25 @@
     <el-card class="head-card">
       <el-form :inline="true" :model="formInline" class="demo-form-inline">
         <el-form-item label="学科编号">
-          <el-input
-            class="short-input"
-            v-model="formInline.user"
-            placeholder="审批人"
-          ></el-input>
+          <el-input class="short-input" v-model="formInline.rid"></el-input>
         </el-form-item>
         <el-form-item label="学科名称">
-          <el-input v-model="formInline.user" placeholder="审批人"></el-input>
+          <el-input v-model="formInline.name"></el-input>
         </el-form-item>
         <el-form-item label="创建者">
           <el-input
             class="short-input"
-            v-model="formInline.user"
-            placeholder="审批人"
+            v-model="formInline.username"
           ></el-input>
         </el-form-item>
         <el-form-item label="状态">
-          <el-select v-model="formInline.region" placeholder="活动区域">
-            <el-option label="区域一" value="shanghai"></el-option>
-            <el-option label="区域二" value="beijing"></el-option>
+          <el-select v-model="formInline.status">
+            <el-option label="禁用" value="0"></el-option>
+            <el-option label="启用" value="1"></el-option>
           </el-select>
         </el-form-item>
         <el-form-item class="btn-form-item">
-          <el-button type="primary">搜索</el-button>
+          <el-button type="primary" @click="getSubList">搜索</el-button>
           <el-button>清除</el-button>
           <el-button
             @click="addFormVisible = true"
@@ -39,11 +34,27 @@
     </el-card>
     <el-card class="body-card">
       <el-table :data="tableData" style="width: 100%">
-        <el-table-column prop="date" label="日期" width="180">
+        <el-table-column type="index" label="序号"> </el-table-column>
+        <el-table-column prop="rid" label="学科编号"> </el-table-column>
+        <el-table-column prop="name" label="学科名称"> </el-table-column>
+        <el-table-column prop="short_name" label="简称"> </el-table-column>
+        <el-table-column prop="username" label="创建者"> </el-table-column>
+        <el-table-column prop="create_time" label="创建日期"> </el-table-column>
+        <el-table-column prop="status" label="状态">
+          <template slot-scope="scope">
+            <span v-if="scope.row.status === 1">启用</span>
+            <span style="color: red" v-else>禁用</span>
+          </template>
         </el-table-column>
-        <el-table-column prop="name" label="姓名" width="180">
+        <el-table-column label="操作">
+          <template slot-scope="scope">
+            <el-button type="text">编辑</el-button>
+            <el-button type="text">{{
+              scope.row.status === 1 ? "禁用" : "启用"
+            }}</el-button>
+            <el-button type="text">删除</el-button>
+          </template>
         </el-table-column>
-        <el-table-column prop="address" label="地址"> </el-table-column>
       </el-table>
       <el-pagination
         background
@@ -68,7 +79,12 @@ import { subjectList } from "../../../api/subject";
 export default {
   data() {
     return {
-      formInline: {},
+      formInline: {
+        rid: "",
+        status: "",
+        name: "",
+        username: "",
+      },
       tableData: [
         {
           date: "2016-05-02",
@@ -106,6 +122,7 @@ export default {
       subjectList({
         page: this.page,
         limit: this.limit,
+        ...formInline,
       }).then((res) => {
         this.tableData = res.data.items;
       });
