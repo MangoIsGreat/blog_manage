@@ -9,10 +9,10 @@ export function subjectAdd(data) {
   });
 }
 
-// 学科 列表
-export function subjectList(params) {
+// 博客 列表
+export function blogList(params) {
   return instance({
-    url: "/subject/list",
+    url: "/blog/list",
     method: "get",
     params,
   });

@@ -3,14 +3,11 @@
     <el-header class="my-header">
       <div class="left">
         <i class="el-icon-s-fold icon" @click="isCollapse = !isCollapse"></i>
-        <img src="../../assets/index_logo.png" alt="" class="logo" />
-        <span class="title">黑马面面</span>
+        <h1 class="title">得到</h1>
       </div>
       <div class="right">
         <img :src="userInfo.avatar" alt="" class="user-icon" />
-        <span class="user-name"
-          >{{ userInfo.username }}，您好</span
-        >
+        <span class="user-name">{{ userInfo.nickname }}，您好</span>
         <el-button @click="logout" type="primary" size="small">退出</el-button>
       </div>
     </el-header>
@@ -22,25 +19,29 @@
           class="el-menu-vertical-demo"
           :collapse="isCollapse"
         >
-          <el-menu-item index="/index/chart">
-            <i class="el-icon-pie-chart"></i>
-            <span slot="title">数据概览</span>
-          </el-menu-item>
-          <el-menu-item index="/index/user">
-            <i class="el-icon-user"></i>
-            <span slot="title">用户列表</span>
-          </el-menu-item>
-          <el-menu-item index="/index/question">
-            <i class="el-icon-edit-outline"></i>
-            <span slot="title">题库列表</span>
-          </el-menu-item>
-          <el-menu-item index="/index/enterprise">
-            <i class="el-icon-office-building"></i>
-            <span slot="title">企业列表</span>
-          </el-menu-item>
-          <el-menu-item index="/index/subject">
+          <el-menu-item index="/home/blog">
             <i class="el-icon-notebook-2"></i>
-            <span slot="title">学科列表</span>
+            <span slot="title">博客管理</span>
+          </el-menu-item>
+          <el-menu-item index="/home/dynamic">
+            <i class="el-icon-chat-dot-square"></i>
+            <span slot="title">动态管理</span>
+          </el-menu-item>
+          <el-menu-item index="/home/news">
+            <i class="el-icon-document"></i>
+            <span slot="title">资讯管理</span>
+          </el-menu-item>
+          <el-menu-item index="/home/user">
+            <i class="el-icon-user"></i>
+            <span slot="title">用户管理</span>
+          </el-menu-item>
+          <el-menu-item index="/home/information">
+            <i class="el-icon-bell"></i>
+            <span slot="title">消息管理</span>
+          </el-menu-item>
+          <el-menu-item index="/home/data">
+            <i class="el-icon-pie-chart"></i>
+            <span slot="title">数据统计</span>
           </el-menu-item>
         </el-menu>
       </el-aside>
@@ -52,8 +53,8 @@
 </template>
 
 <script>
-import { userLogout } from "../../api/user";
 import { removeToken } from "../../utils/token";
+
 export default {
   name: "index",
   data() {
@@ -68,18 +69,14 @@ export default {
   },
   methods: {
     logout() {
-      this.$confirm("你真的要离开我这个网站吗？", "友情提示", {
+      this.$confirm("您确定要退出登录吗？", "友情提示", {
         confirmButtonText: "确定",
         cancelButtonText: "取消",
         type: "warning",
       }).then(() => {
-        userLogout().then((res) => {
-          if (res.data.code === 200) {
-            removeToken();
-            this.$store.state.userInfo = {};
-            this.$router.push("/login");
-          }
-        });
+        removeToken();
+        this.$store.state.userInfo = {};
+        this.$router.push("/login");
       });
     },
   },
@@ -99,6 +96,7 @@ export default {
       .icon {
         font-size: 24px;
         margin-right: 22px;
+        cursor: pointer;
       }
       .logo {
         width: 33px;
@@ -132,7 +130,7 @@ export default {
     }
   }
   .my-main {
-    background-color: #E8E9EC;
+    background-color: #e8e9ec;
   }
 }
 </style>

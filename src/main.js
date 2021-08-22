@@ -3,6 +3,7 @@ import App from "./App.vue";
 import router from "./router/router.js";
 import store from "./store/store";
 import ElementUI from "element-ui";
+import "./utils/day";
 import "element-ui/lib/theme-chalk/index.css";
 import "./style/base.css";
 

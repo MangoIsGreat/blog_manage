@@ -2,12 +2,12 @@ import Vue from "vue";
 import VueRouter from "vue-router";
 import login from "../views/login/login.vue";
 import index from "../views/index/index.vue";
-import chart from "../views/index/chart/index.vue";
-import enterprise from "../views/index/enterprise/index.vue";
-import question from "../views/index/question/index.vue";
-import subject from "../views/index/subject/index.vue";
+import blog from "../views/index/blog/index.vue";
+import dynamic from "../views/index/dynamic/index.vue";
+import news from "../views/index/news/index.vue";
 import user from "../views/index/user/index.vue";
-
+import information from "../views/index/information/index.vue";
+import chart from "../views/index/chart/index.vue";
 import { getToken, removeToken } from "../utils/token";
 import { Message } from "element-ui";
 import { userInfo } from "../api/user";
@@ -23,28 +23,32 @@ const routes = [
     component: login,
   },
   {
-    path: "/index",
+    path: "/home",
     component: index,
     children: [
       {
-        path: "subject",
-        component: subject,
+        path: "blog",
+        component: blog,
       },
       {
-        path: "chart",
-        component: chart,
+        path: "dynamic",
+        component: dynamic,
       },
       {
-        path: "enterprise",
-        component: enterprise,
-      },
-      {
-        path: "question",
-        component: question,
+        path: "news",
+        component: news,
       },
       {
         path: "user",
         component: user,
+      },
+      {
+        path: "information",
+        component: information,
+      },
+      {
+        path: "data",
+        component: chart,
       },
     ],
   },
