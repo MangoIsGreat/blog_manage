@@ -1,5 +1,5 @@
 // 定义KEY的常量
-const KEY = "mmtoken";
+const KEY = "token";
 
 // 保存token
 export const setToken = (token) => {

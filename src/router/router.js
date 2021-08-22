@@ -62,22 +62,18 @@ router.beforeEach((to, from, next) => {
   if (whitePaths.includes(to.path.toLocaleLowerCase()) === false) {
     // 必须要登录才能访问
     if (!getToken()) {
-      Message.error("你还未登录，请先登录！");
-      // next("/login");
-      next();
+      Message.error("您还未登录，请先登录！");
+      next("/login");
     } else {
       userInfo().then((res) => {
-        if (res.data.code === 200) {
-          res.data.data.avatar =
-            process.env.VUE_APP_BASEURL + "/" + res.data.data.avatar;
+        if (res.error_code === 0) {
           // 将用户数据保存到仓库
-          store.commit("changeUserInfo", res.data.data);
+          store.commit("changeUserInfo", res.data);
           next();
-        } else if (res.data.code === 206) {
-          Message.warning("token认证失败！");
+        } else {
+          Message.warning("认证失败！");
           removeToken();
-          // next("/login");
-          next();
+          next("/login");
         }
       });
     }

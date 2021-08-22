@@ -1,15 +1,16 @@
 import axios from "axios";
 import { getToken } from "../utils/token";
+import { encode } from "./encode";
 
 const instance = axios.create({
   baseURL: process.env.VUE_APP_BASEURL,
-  withCredentials: true,
+  // withCredentials: true,
 });
 
 // 添加请求拦截器
 instance.interceptors.request.use(
   function(config) {
-    config.headers.token = getToken();
+    config.headers["Authorization"] = encode(getToken());
     return config;
   },
   function(error) {
