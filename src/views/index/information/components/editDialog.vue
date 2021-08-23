@@ -30,7 +30,8 @@
 </template>
 
 <script>
-import { subjectEdit } from "../../../../api/subject";
+import { subjectEdit } from "../../../../api/blog";
+
 export default {
   data() {
     return {

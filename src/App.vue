@@ -3,5 +3,7 @@
 </template>
 
 <style lang="less">
-
+body {
+  overflow: hidden;
+}
 </style>

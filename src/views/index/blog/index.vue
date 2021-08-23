@@ -6,23 +6,25 @@
           <el-input
             size="small"
             class="short-input"
-            v-model="formInline.rid"
+            v-model="formInline.blogId"
           ></el-input>
         </el-form-item>
-        <el-form-item label="博客名称">
-          <el-input size="small" v-model="formInline.name"></el-input>
-        </el-form-item>
-        <el-form-item label="作者">
+        <el-form-item label="作者ID">
           <el-input
             size="small"
             class="short-input"
-            v-model="formInline.username"
+            v-model="formInline.author"
           ></el-input>
         </el-form-item>
         <el-form-item label="类型">
-          <el-select size="small" v-model="formInline.status">
-            <el-option label="禁用" value="0"></el-option>
-            <el-option label="启用" value="1"></el-option>
+          <el-select size="small" v-model="formInline.type">
+            <div v-for="(item, index) in typeList" :key="index">
+              <el-option
+                v-if="![10000, 10001].includes(item.tag_type)"
+                :label="item.tag_name"
+                :value="item.tag_type"
+              ></el-option>
+            </div>
           </el-select>
         </el-form-item>
         <el-form-item class="btn-form-item">
@@ -30,18 +32,11 @@
             >搜索</el-button
           >
           <el-button size="small" @click="clear">清除</el-button>
-          <el-button
-            size="small"
-            @click="addFormVisible = true"
-            type="primary"
-            icon="el-icon-plus"
-            >发表博客</el-button
-          >
         </el-form-item>
       </el-form>
     </el-card>
     <el-card class="body-card">
-      <el-table :data="tableData" style="width: 100%">
+      <el-table height="420" :data="tableData" style="width: 100%">
         <el-table-column width="120" prop="id" label="博客ID">
         </el-table-column>
         <el-table-column width="120" prop="title" label="博客名">
@@ -51,6 +46,12 @@
         <el-table-column width="120" prop="User.nickname" label="作者名">
         </el-table-column>
         <el-table-column width="120" prop="Tag.tagName" label="类型">
+        </el-table-column>
+        <el-table-column prop="status" label="状态">
+          <template slot-scope="scope">
+            <span v-if="scope.row.isShow === true">展示</span>
+            <span style="color: red" v-else>隐藏</span>
+          </template>
         </el-table-column>
         <el-table-column width="120" prop="blogLikeNum" label="点赞数">
         </el-table-column>
@@ -66,10 +67,18 @@
         >
         </el-table-column>
         <el-table-column width="140" fixed="right" label="操作">
-          <template>
-            <el-button type="text">详情</el-button>
-            <el-button type="text">编辑</el-button>
-            <el-button @click="removeItem" type="text">删除</el-button>
+          <template slot-scope="scope">
+            <el-button @click="hiddenItem(scope.row)" type="text">{{
+              scope.row.isShow === true ? "隐藏" : "展示"
+            }}</el-button>
+            <el-button
+              @click="$router.push(`/home/blog/${scope.row.id}`)"
+              type="text"
+              >编辑</el-button
+            >
+            <el-button @click="removeItem(scope.row)" type="text"
+              >删除</el-button
+            >
           </template>
         </el-table-column>
       </el-table>
@@ -77,7 +86,7 @@
         background
         @size-change="handleSizeChange"
         @current-change="handleCurrentChange"
-        :current-page="page"
+        :current-page="pageIndex"
         :page-sizes="pageSizes"
         :page-size="limit"
         layout="total, sizes, prev, pager, next, jumper"
@@ -85,44 +94,41 @@
       >
       </el-pagination>
     </el-card>
-    <!-- 添加学科对话框 -->
-    <addDialog />
-    <!-- 编辑学科对话框 -->
-    <editDialog ref="editDialog" />
   </div>
 </template>
 
 <script>
-import addDialog from "./components/addDialog.vue";
-import editDialog from "./components/editDialog.vue";
-import { blogList, subjectRemove, subjectStatus } from "../../../api/subject";
+import {
+  blogList,
+  typeList,
+  blogRemove,
+  hiddenRemove,
+} from "../../../api/blog";
 import dayjs from "dayjs";
 
 export default {
   data() {
     return {
       formInline: {
-        rid: "",
-        status: "",
-        name: "",
-        username: "",
+        blogId: "",
+        author: "",
+        type: "",
       },
+      typeList: [], // 博客类型列表
       tableData: [],
-      addFormVisible: false,
       editFormVisible: false,
-      page: 1, // 页码
-      limit: 2, // 每页数据条数
+      pageIndex: 1, // 页码
+      limit: 5, // 每页数据条数
       pageSizes: [5, 10, 15, 20], // 页容量选项
       total: 0, // 总条数
     };
   },
-  components: {
-    addDialog,
-    editDialog,
-  },
   created() {
     // 获取列表数据
     this.getBlogList();
+
+    // 获取tag类型
+    this.getTypeList();
   },
   methods: {
     filterTime(row) {
@@ -134,44 +140,55 @@ export default {
 
       this.$refs.editDialog.editForm = JSON.parse(JSON.stringify(item));
     },
-    changeStatus(item) {
-      subjectStatus({
-        id: item.id,
-      }).then((res) => {
-        if (res.code === 200) {
-          this.$message.success("状态修改成功！");
-
-          this.getBlogList();
-        }
-      });
-    },
     removeItem(item) {
-      this.$confirm(`你真的要删除 ${item.intro}`, "友情提示", {
+      this.$confirm(`您确定要删除博客 ${item.title} 吗？`, "友情提示", {
         confirmButtonText: "确定",
         cancelButtonText: "取消",
         type: "warning",
       })
         .then(() => {
-          subjectRemove({
+          blogRemove({
             id: item.id,
           }).then((res) => {
-            if (res.code === 200) {
+            if (res.error_code === 0) {
               this.$message.success("删除成功！");
+
+              this.getBlogList();
+            } else {
+              this.$message.error("删除失败！");
             }
           });
         })
         .catch(() => {});
     },
+    hiddenItem(item) {
+      hiddenRemove({
+        id: item.id,
+      }).then((res) => {
+        if (res.error_code !== 0) {
+          return this.$message.error("操作失败！");
+        }
+
+        if (res.data === 0) {
+          this.$message.success(`博客 ${item.title} 已经隐藏！`);
+
+          this.getBlogList();
+        } else if (res.data === 1) {
+          this.$message.success(`博客 ${item.title} 已经展示！`);
+
+          this.getBlogList();
+        }
+      });
+    },
     // 页码改变
-    handleSizeChange(page) {
-      this.page = page;
+    handleSizeChange(num) {
+      this.limit = num;
 
       this.getBlogList();
     },
     // 页容量改变
-    handleCurrentChange(size) {
-      // 保存页容量
-      this.limit = size;
+    handleCurrentChange(pageIndex) {
+      this.pageIndex = pageIndex;
 
       this.getBlogList();
     },
@@ -184,9 +201,18 @@ export default {
 
       this.getBlogList();
     },
+    getTypeList() {
+      typeList().then((res) => {
+        if (res.error_code === 0) {
+          this.typeList = res.data.rows;
+        } else {
+          this.$message.error("博客类型数据获取失败！");
+        }
+      });
+    },
     getBlogList() {
       blogList({
-        pageIndex: this.page,
+        pageIndex: this.pageIndex,
         pageSize: this.limit,
         ...this.formInline,
       }).then((res) => {
@@ -219,6 +245,7 @@ export default {
     }
     .el-form-item {
       margin-bottom: 0;
+      margin-right: 30px;
     }
   }
   .el-pagination {

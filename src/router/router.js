@@ -8,6 +8,9 @@ import news from "../views/index/news/index.vue";
 import user from "../views/index/user/index.vue";
 import information from "../views/index/information/index.vue";
 import chart from "../views/index/chart/index.vue";
+import bloginfo from "../views/index/bloginfo/index.vue";
+import dynamicinfo from "../views/index/dynamicinfo/index.vue";
+import newsinfo from "../views/index/newsinfo/index.vue";
 import { getToken, removeToken } from "../utils/token";
 import { Message } from "element-ui";
 import { userInfo } from "../api/user";
@@ -31,12 +34,24 @@ const routes = [
         component: blog,
       },
       {
+        path: "blog/:blogid",
+        component: bloginfo,
+      },
+      {
         path: "dynamic",
         component: dynamic,
       },
       {
+        path: "dynamic/:dynId",
+        component: dynamicinfo,
+      },
+      {
         path: "news",
         component: news,
+      },
+      {
+        path: "news/:newsId",
+        component: newsinfo,
       },
       {
         path: "user",
