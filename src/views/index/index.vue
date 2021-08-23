@@ -35,14 +35,6 @@
             <i class="el-icon-user"></i>
             <span slot="title">用户管理</span>
           </el-menu-item>
-          <el-menu-item index="/home/information">
-            <i class="el-icon-bell"></i>
-            <span slot="title">消息管理</span>
-          </el-menu-item>
-          <el-menu-item index="/home/data">
-            <i class="el-icon-pie-chart"></i>
-            <span slot="title">数据统计</span>
-          </el-menu-item>
         </el-menu>
       </el-aside>
       <el-main class="my-main">

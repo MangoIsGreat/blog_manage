@@ -116,7 +116,6 @@ export default {
       },
       typeList: [], // 博客类型列表
       tableData: [],
-      editFormVisible: false,
       pageIndex: 1, // 页码
       limit: 5, // 每页数据条数
       pageSizes: [5, 10, 15, 20], // 页容量选项
@@ -133,12 +132,6 @@ export default {
   methods: {
     filterTime(row) {
       return dayjs(row.created_at).format("YYYY-MM-DD HH:mm:ss");
-    },
-    showEdit(item) {
-      // 显示对话框
-      this.editFormVisible = true;
-
-      this.$refs.editDialog.editForm = JSON.parse(JSON.stringify(item));
     },
     removeItem(item) {
       this.$confirm(`您确定要删除博客 ${item.title} 吗？`, "友情提示", {
