@@ -21,6 +21,10 @@ Vue.use(VueRouter);
 // 定义路由规则：
 const routes = [
   {
+    path: "/",
+    component: login,
+  },
+  {
     path: "/login",
     component: login,
   },
@@ -31,6 +35,9 @@ const routes = [
       {
         path: "blog",
         component: blog,
+        meta: {
+          keepAlive: true, //代表需要缓存
+        },
       },
       {
         path: "blog/:blogid",
@@ -39,6 +46,9 @@ const routes = [
       {
         path: "dynamic",
         component: dynamic,
+        meta: {
+          keepAlive: true,
+        },
       },
       {
         path: "dynamic/:dynId",
@@ -47,6 +57,9 @@ const routes = [
       {
         path: "news",
         component: news,
+        meta: {
+          keepAlive: true,
+        },
       },
       {
         path: "news/:newsId",
@@ -55,6 +68,9 @@ const routes = [
       {
         path: "user",
         component: user,
+        meta: {
+          keepAlive: true,
+        },
       },
       {
         path: "user/:uid",

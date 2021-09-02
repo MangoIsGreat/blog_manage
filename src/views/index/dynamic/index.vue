@@ -86,12 +86,7 @@
 </template>
 
 <script>
-import {
-  dynamicList,
-  typeList,
-  dynamicRemove,
-  hiddenRemove,
-} from "../../../api/dynamic";
+import { dynamicList, typeList, dynamicRemove } from "../../../api/dynamic";
 import dayjs from "dayjs";
 
 export default {
@@ -110,6 +105,33 @@ export default {
       pageSizes: [5, 10, 15, 20], // 页容量选项
       total: 0, // 总条数
     };
+  },
+  beforeRouteEnter(to, from, next) {
+    next((vm) => {
+      if (
+        [
+          "/",
+          "/home",
+          "/home/dynamic",
+          "/home/blog",
+          "/home/news",
+          "/home/user",
+        ].includes(from.path)
+      ) {
+        vm.getBlogList();
+
+        // // 获取tag类型
+        vm.getTypeList();
+
+        vm.formInline = {
+          dynId: "",
+          author: "",
+          theme: "",
+        };
+
+        vm.pageIndex = 1;
+      }
+    });
   },
   created() {
     // 获取列表数据
@@ -143,30 +165,12 @@ export default {
 
               this.getBlogList();
             } else {
-              this.$message.error("删除失败！");
+              // this.$message.error("删除失败！");
+              this.$message.error(res.msg || "删除失败！");
             }
           });
         })
         .catch(() => {});
-    },
-    hiddenItem(item) {
-      hiddenRemove({
-        id: item.id,
-      }).then((res) => {
-        if (res.error_code !== 0) {
-          return this.$message.error("操作失败！");
-        }
-
-        if (res.data === 0) {
-          this.$message.success(`博客 ${item.title} 已经隐藏！`);
-
-          this.getBlogList();
-        } else if (res.data === 1) {
-          this.$message.success(`博客 ${item.title} 已经展示！`);
-
-          this.getBlogList();
-        }
-      });
     },
     // 页码改变
     handleSizeChange(num) {

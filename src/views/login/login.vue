@@ -120,7 +120,7 @@ export default {
               } else if (res.error_code === 0) {
                 this.$message.success("登录成功！");
                 setToken(res.token);
-                this.$router.push("/home");
+                this.$router.push("/home/blog");
               }
             });
           } else {

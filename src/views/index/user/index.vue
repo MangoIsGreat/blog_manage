@@ -97,6 +97,29 @@ export default {
       total: 0, // 总条数
     };
   },
+  beforeRouteEnter(to, from, next) {
+    next((vm) => {
+      if (
+        [
+          "/",
+          "/home",
+          "/home/dynamic",
+          "/home/blog",
+          "/home/news",
+          "/home/user",
+        ].includes(from.path)
+      ) {
+        vm.getBlogList();
+
+        vm.formInline = {
+          account: "",
+          nickname: "",
+        };
+
+        vm.pageIndex = 1;
+      }
+    });
+  },
   created() {
     // 获取列表数据
     this.getBlogList();
@@ -110,7 +133,7 @@ export default {
         id: item.id,
       }).then((res) => {
         if (res.error_code !== 0) {
-          return this.$message.error("操作失败！");
+          return this.$message.error(res.msg || "删除失败！");
         }
 
         this.$message.success(res.data);

@@ -47,12 +47,12 @@
         </el-table-column>
         <el-table-column width="120" prop="Tag.tagName" label="类型">
         </el-table-column>
-        <el-table-column prop="status" label="状态">
+        <!-- <el-table-column prop="status" label="状态">
           <template slot-scope="scope">
             <span v-if="scope.row.isShow === true">展示</span>
             <span style="color: red" v-else>隐藏</span>
           </template>
-        </el-table-column>
+        </el-table-column> -->
         <el-table-column width="120" prop="blogLikeNum" label="点赞数">
         </el-table-column>
         <el-table-column width="120" prop="blogReadNum" label="阅读数">
@@ -68,9 +68,9 @@
         </el-table-column>
         <el-table-column width="140" fixed="right" label="操作">
           <template slot-scope="scope">
-            <el-button @click="hiddenItem(scope.row)" type="text">{{
+            <!-- <el-button @click="hiddenItem(scope.row)" type="text">{{
               scope.row.isShow === true ? "隐藏" : "展示"
-            }}</el-button>
+            }}</el-button> -->
             <el-button
               @click="$router.push(`/home/blog/${scope.row.id}`)"
               type="text"
@@ -122,6 +122,32 @@ export default {
       total: 0, // 总条数
     };
   },
+  beforeRouteEnter(to, from, next) {
+    next((vm) => {
+      if (
+        [
+          "/",
+          "/home",
+          "/home/dynamic",
+          "/home/blog",
+          "/home/news",
+          "/home/user",
+        ].includes(from.path)
+      ) {
+        vm.pageIndex = 1;
+        vm.formInline = {
+          blogId: "",
+          author: "",
+          type: "",
+        };
+
+        vm.getBlogList();
+
+        // // 获取tag类型
+        vm.getTypeList();
+      }
+    });
+  },
   created() {
     // 获取列表数据
     this.getBlogList();
@@ -148,7 +174,7 @@ export default {
 
               this.getBlogList();
             } else {
-              this.$message.error("删除失败！");
+              this.$message.error(res.msg || "删除失败！");
             }
           });
         })
