@@ -1,15 +1,15 @@
 import Vue from "vue";
 import VueRouter from "vue-router";
-import login from "../views/login/login.vue";
-import index from "../views/index/index.vue";
-import blog from "../views/index/blog/index.vue";
-import dynamic from "../views/index/dynamic/index.vue";
-import news from "../views/index/news/index.vue";
-import user from "../views/index/user/index.vue";
-import bloginfo from "../views/index/bloginfo/index.vue";
-import dynamicinfo from "../views/index/dynamicinfo/index.vue";
-import newsinfo from "../views/index/newsinfo/index.vue";
-import userinfo from "../views/index/userinfo/index.vue";
+const login = () => import("../views/login/login.vue");
+const index = () => import("../views/index/index.vue");
+const blog = () => import("../views/index/blog/index.vue");
+const dynamic = () => import("../views/index/dynamic/index.vue");
+const news = () => import("../views/index/news/index.vue");
+const user = () => import("../views/index/user/index.vue");
+const bloginfo = () => import("../views/index/bloginfo/index.vue");
+const dynamicinfo = () => import("../views/index/dynamicinfo/index.vue");
+const newsinfo = () => import("../views/index/newsinfo/index.vue");
+const userinfo = () => import("../views/index/userinfo/index.vue");
 import { getToken, removeToken } from "../utils/token";
 import { Message } from "element-ui";
 import { userInfo } from "../api/user";
@@ -82,6 +82,7 @@ const routes = [
 
 // 创建路由实例
 const router = new VueRouter({
+  mode:"history",
   routes,
 });
 

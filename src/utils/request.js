@@ -1,6 +1,7 @@
 import axios from "axios";
 import { getToken } from "../utils/token";
 import { encode } from "./encode";
+import { Message } from "element-ui";
 
 const instance = axios.create({
   baseURL: process.env.VUE_APP_BASEURL,
@@ -24,6 +25,7 @@ instance.interceptors.response.use(
     return response.data;
   },
   function(error) {
+    Message.error("登录失败，请输入正确的账号和密码！");
     return Promise.reject(error);
   }
 );

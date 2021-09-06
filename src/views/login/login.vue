@@ -116,7 +116,7 @@ export default {
               secret: this.form.password,
             }).then((res) => {
               if (res.error_code !== 0) {
-                this.$message.error(res.data.message);
+                this.$message.error(res.msg);
               } else if (res.error_code === 0) {
                 this.$message.success("登录成功！");
                 setToken(res.token);
